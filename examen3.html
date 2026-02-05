@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Examen 3</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h2>Examen 3 (Preguntas 21–32)</h2>
+
+<div id="exam"></div>
+
+<div class="buttons">
+  <button onclick="gradeExam()">Calificar</button>
+  <span id="result"></span>
+  <br><br>
+  <button onclick="resetExam()">Reiniciar</button>
+  <button onclick="goBack()">Atrás</button>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "What will be printed?\nclass myClass with _init_",
+    options: ["None","0","an error occurs","1"],
+    correct: [1],
+    explanation: "_init_ no es __init__, no se ejecuta."
+  },
+  {
+    text: "What will be the output?\ntext='hello'\nprint(text[4:100])",
+    options: ["error","o","hell","hello"],
+    correct: [1],
+    explanation: "Slicing nunca lanza error por rango."
+  },
+  {
+    text: "Can the value of a tuple element be changed?",
+    options: ["Yes","No"],
+    correct: [1],
+    explanation: "Las tuplas son inmutables."
+  },
+  {
+    text: "Which expressions create a list of exactly 3 elements?",
+    options: [
+      "'asd'.split()",
+      "'a b c'.split('_')",
+      "a = [1,2,3]",
+      "list(range(3))"
+    ],
+    correct: [2,3],
+    explanation: "Las opciones 3 y 4 generan exactamente 3 elementos."
+  },
+  {
+    text: "What will be printed?\nwhile Fibonacci",
+    options: ["112","1234","1123","error"],
+    correct: [2],
+    explanation: "Asignación múltiple + end=''."
+  },
+  {
+    text: "What happens when running: y,x = y,x",
+    options: [
+      "values are swapped",
+      "equivalent to x y=yx",
+      "syntax error"
+    ],
+    correct: [2],
+    explanation: "Variables no inicializadas."
+  },
+  {
+    text: "How to add 'python test' to x={'test':[]}",
+    options: [
+      "x['test'][]='python test'",
+      "x['test'].append('python test')",
+      "x['test'].insert(0,'python test')"
+    ],
+    correct: [1,2],
+    explanation: "append e insert son válidos."
+  },
+  {
+    text: "What is the value of L2?\nL1=[2,3,4]; L2=L1[:]; L1[0]=24",
+    options: [
+      "[4,3,2]",
+      "[24,4,3]",
+      "[2,3,4]",
+      "[24,3,4]"
+    ],
+    correct: [2],
+    explanation: "[:] crea una copia independiente."
+  },
+  {
+    text: "What will be printed?\nfunc() + func(value)",
+    options: ["syntax error","4","2","1","3"],
+    correct: [4],
+    explanation: "2 + 1 = 3."
+  },
+  {
+    text: "What is the value of L2?\nL2=L1",
+    options: [
+      "[2,3,24]",
+      "[2,4,3]",
+      "[24,3,4]",
+      "[2,3,4]"
+    ],
+    correct: [2],
+    explanation: "Ambas variables apuntan al mismo objeto."
+  },
+  {
+    text: "What is the result of: True + 4",
+    options: ["False","True","5","error"],
+    correct: [2],
+    explanation: "True equivale a 1."
+  },
+  {
+    text: "Which operations can be applied to a string?",
+    options: [
+      "both of them",
+      "*",
+      "+",
+      "none"
+    ],
+    correct: [0],
+    explanation: "+ concatena y * repite."
+  }
+];
+
+const examDiv=document.getElementById("exam");
+
+questions.forEach((q,i)=>{
+  const d=document.createElement("div");
+  d.className="question";
+  d.innerHTML=`<p><b>${i+21}. ${q.text}</b></p>`;
+  const a=document.createElement("div");
+  a.className="answers";
+  q.options.forEach((o,j)=>{
+    a.innerHTML+=`
+      <label>
+        <input type="checkbox" name="q${i}" value="${j}">
+        ${o}
+      </label>`;
+  });
+  d.appendChild(a);
+  const e=document.createElement("div");
+  e.className="explanation";
+  e.textContent=q.explanation;
+  d.appendChild(e);
+  examDiv.appendChild(d);
+});
+
+function gradeExam(){
+  let c=0,w=0;
+  questions.forEach((q,i)=>{
+    const ch=document.querySelectorAll(`input[name="q${i}"]`);
+    const sel=[...ch].filter(x=>x.checked).map(x=>+x.value);
+    ch.forEach((cb,idx)=>{
+      cb.parentElement.classList.remove("correct","incorrect");
+      if(q.correct.includes(idx)) cb.parentElement.classList.add("correct");
+      else if(cb.checked) cb.parentElement.classList.add("incorrect");
+    });
+    if(JSON.stringify(sel.sort())===JSON.stringify(q.correct.slice().sort())) c++; else w++;
+    document.querySelectorAll(".explanation")[i].style.display="block";
+  });
+  document.getElementById("result").textContent=`Correctas: ${c} | Incorrectas: ${w}`;
+}
+
+function resetExam(){
+  document.querySelectorAll("input").forEach(i=>i.checked=false);
+  document.querySelectorAll("label").forEach(l=>l.classList.remove("correct","incorrect"));
+  document.querySelectorAll(".explanation").forEach(e=>e.style.display="none");
+  document.getElementById("result").textContent="";
+}
+
+function goBack(){ window.location.href="index.html"; }
+</script>
+
+</body>
+</html>

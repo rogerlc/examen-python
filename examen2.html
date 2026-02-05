@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Examen 2</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h2>Examen 2 (Preguntas 11–20)</h2>
+
+<div id="exam"></div>
+
+<div class="buttons">
+  <button onclick="gradeExam()">Calificar</button>
+  <span id="result"></span>
+  <br><br>
+  <button onclick="resetExam()">Reiniciar</button>
+  <button onclick="goBack()">Atrás</button>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "What will be the value of variable 'a'?\na = [1,2,3]\na[-3:-1] = 10,20,30,40",
+    options: [
+      "TypeError",
+      "[10,20,30,40,2,3]",
+      "[10,20,30,40,3]",
+      "IndexError",
+      "[10,20,30,40]"
+    ],
+    correct: [2],
+    explanation: "El slicing reemplaza los elementos [-3:-1] y el último 3 queda intacto."
+  },
+  {
+    text: "What basic types of objects are immutable?",
+    options: [
+      "Numbers",
+      "Tuples",
+      "Dictionaries",
+      "Strings",
+      "Lists"
+    ],
+    correct: [0,1,3],
+    explanation: "Numbers, tuples y strings son inmutables. Lists y dicts no."
+  },
+  {
+    text: "What will be the result of this program?\nclass X with __slots__",
+    options: [
+      "AttributeError type error",
+      "6",
+      "None",
+      "Ups"
+    ],
+    correct: [3],
+    explanation: "Asignar self.d no está permitido por __slots__, lanza excepción."
+  },
+  {
+    text: "What will be the output?\ndef dbl(self,x)\nclass C\nobj.f(1)",
+    options: [
+      "an error will occur because f takes 2 parameters",
+      "nothing will be printed",
+      "2",
+      "0"
+    ],
+    correct: [2],
+    explanation: "La función se enlaza como método y self se pasa automáticamente."
+  },
+  {
+    text: "What will be the output of this code with class Y?",
+    options: [
+      "the code will not print anything",
+      "aaa",
+      "an error occurs",
+      "bbb aaa",
+      "bbb"
+    ],
+    correct: [2],
+    explanation: "Errores de sintaxis en definición de parámetros."
+  },
+  {
+    text: "What will be the value of variable 'x'?\nx = y = 1",
+    options: [
+      "1",
+      "0",
+      "x will not be initialized"
+    ],
+    correct: [0],
+    explanation: "El valor 1 se asigna a ambas variables."
+  },
+  {
+    text: "What will be the value of list 'arr'?\narr=[1,2]\nfor a in arr[:]: arr.insert(0,3)",
+    options: [
+      "[3,3,1,2]",
+      "[3,3,3,1,2]",
+      "[1,2,3,3]",
+      "IndexError",
+      "[3,1,2,3]"
+    ],
+    correct: [0],
+    explanation: "El for itera solo dos veces sobre la copia."
+  },
+  {
+    text: "What will be the output?\nvalue=0\nif/elif",
+    options: [
+      "the code will not print anything",
+      "a syntax error will occur",
+      "<=0",
+      ">0"
+    ],
+    correct: [1],
+    explanation: "elif siempre necesita condición."
+  },
+  {
+    text: "What type of data is ('',)?",
+    options: [
+      "tuple",
+      "syntax error",
+      "string",
+      "unicode"
+    ],
+    correct: [0],
+    explanation: "La coma define una tupla de un solo elemento."
+  },
+  {
+    text: "What will be the output?\nword='foobar'\nprint(word[3:]+word[:3])",
+    options: [
+      "foobar",
+      "foo bar",
+      "bar foo",
+      "barfoo",
+      "an error occurs"
+    ],
+    correct: [3],
+    explanation: "Se concatenan 'bar' + 'foo'."
+  }
+];
+
+const examDiv = document.getElementById("exam");
+
+questions.forEach((q, i) => {
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<p><b>${i+11}. ${q.text}</b></p>`;
+  const ansDiv = document.createElement("div");
+  ansDiv.className = "answers";
+
+  q.options.forEach((opt, j) => {
+    ansDiv.innerHTML += `
+      <label>
+        <input type="checkbox" name="q${i}" value="${j}">
+        ${opt}
+      </label>`;
+  });
+
+  div.appendChild(ansDiv);
+
+  const exp = document.createElement("div");
+  exp.className = "explanation";
+  exp.textContent = q.explanation;
+  div.appendChild(exp);
+
+  examDiv.appendChild(div);
+});
+
+function gradeExam() {
+  let c=0, w=0;
+  questions.forEach((q,i)=>{
+    const checks=document.querySelectorAll(`input[name="q${i}"]`);
+    const sel=[...checks].filter(x=>x.checked).map(x=>+x.value);
+    checks.forEach((cbox,idx)=>{
+      cbox.parentElement.classList.remove("correct","incorrect");
+      if(q.correct.includes(idx)) cbox.parentElement.classList.add("correct");
+      else if(cbox.checked) cbox.parentElement.classList.add("incorrect");
+    });
+    if(JSON.stringify(sel.sort())===JSON.stringify(q.correct.slice().sort())) c++; else w++;
+    document.querySelectorAll(".explanation")[i].style.display="block";
+  });
+  document.getElementById("result").textContent=`Correctas: ${c} | Incorrectas: ${w}`;
+}
+
+function resetExam(){
+  document.querySelectorAll("input").forEach(i=>i.checked=false);
+  document.querySelectorAll("label").forEach(l=>l.classList.remove("correct","incorrect"));
+  document.querySelectorAll(".explanation").forEach(e=>e.style.display="none");
+  document.getElementById("result").textContent="";
+}
+
+function goBack(){ window.location.href="index.html"; }
+</script>
+
+</body>
+</html>

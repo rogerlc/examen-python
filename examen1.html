@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Examen 1</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h2>Examen 1 (Preguntas 1–10)</h2>
+
+<div id="exam"></div>
+
+<div class="buttons">
+  <button onclick="gradeExam()">Calificar</button>
+  <span id="result"></span>
+  <br><br>
+  <button onclick="resetExam()">Reiniciar</button>
+  <button onclick="goBack()">Atrás</button>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "What will be the output of the following code?\nprint((1, 2, 3) < (1,2,4))",
+    options: ["false", "true", "an error occurs", "none"],
+    correct: [1],
+    explanation: "Python compara tuplas elemento por elemento hasta encontrar una diferencia."
+  },
+  {
+    text: "List all valid function calls:\ndef story(animal, action='stolen', object='milk')",
+    options: [
+      "story('squirel', action='got', object='nut')",
+      "story('dog','found',object='bone')",
+      "story(animal='bird','leaf')",
+      "story('banana', animal='monkey')",
+      "story('cat')",
+      "story('bear',stuff='honey')"
+    ],
+    correct: [0,1,4],
+    explanation: "animal es obligatorio. action y object tienen valores por defecto."
+  },
+  {
+    text: "What will be the value of 'a'?\na = [[]] * 3\na[0].append(3)\na[1] = 1",
+    options: [
+      "[[3], 1, [3]]",
+      "[[3], [1], [3]]",
+      "[[], [], []]",
+      "[[3], None, []]",
+      "[[3], [1], []]"
+    ],
+    correct: [0],
+    explanation: "Se crean múltiples referencias a la misma lista."
+  },
+  {
+    text: "Is there a difference between single and double quotes?",
+    options: ["Yes", "No"],
+    correct: [1],
+    explanation: "Son equivalentes en Python."
+  },
+  {
+    text: "What is printed?\na,b=2,3\na,b=b,a*2\nprint(a,b)",
+    options: [
+      "Error",
+      "43",
+      "35",
+      "53",
+      "34"
+    ],
+    correct: [4],
+    explanation: "Python evalúa el lado derecho primero."
+  },
+  {
+    text: "What will be the output?\na [1,2,3]\ndel a[i]\nprint(a[1])",
+    options: ["1", "the code will throw an error", "2", "3"],
+    correct: [1],
+    explanation: "Error de sintaxis y variable i no definida."
+  },
+  {
+    text: "What will be the result of this program with lambda?",
+    options: ["45", "42", "102", "interpreter error"],
+    correct: [3],
+    explanation: "Uso inválido de variables en for y lambda."
+  },
+  {
+    text: "What will be printed?\na=[1,2,3]\na[2]=2\nprint(a)",
+    options: [
+      "error",
+      "[1,2,2,3]",
+      "[1,2,2]",
+      "[1,2,3]"
+    ],
+    correct: [2],
+    explanation: "Se reemplaza el valor, no se inserta."
+  },
+  {
+    text: "How can func be called?",
+    options: [
+      "myClass.func()",
+      "obj=myClass(); obj.func()",
+      "obj=myClass(); myClass.func(obj)",
+      "obj=myClass(); obj.func",
+      "none"
+    ],
+    correct: [1,2],
+    explanation: "self se pasa automáticamente o manualmente."
+  },
+  {
+    text: "Which exceptions exist in Python 3?",
+    options: [
+      "ZeroDivisionError",
+      "ImportError",
+      "NameError",
+      "TypeError"
+    ],
+    correct: [0,1,2,3],
+    explanation: "Todas son excepciones válidas."
+  }
+];
+
+const examDiv = document.getElementById("exam");
+
+questions.forEach((q, i) => {
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<p><b>${i+1}. ${q.text}</b></p>`;
+  
+  const ansDiv = document.createElement("div");
+  ansDiv.className = "answers";
+
+  q.options.forEach((opt, j) => {
+    ansDiv.innerHTML += `
+      <label>
+        <input type="checkbox" name="q${i}" value="${j}">
+        ${opt}
+      </label>`;
+  });
+
+  div.appendChild(ansDiv);
+
+  const exp = document.createElement("div");
+  exp.className = "explanation";
+  exp.textContent = q.explanation || "";
+  div.appendChild(exp);
+
+  examDiv.appendChild(div);
+});
+
+function gradeExam() {
+  let correctCount = 0;
+  let incorrectCount = 0;
+
+  questions.forEach((q, i) => {
+    const checks = document.querySelectorAll(`input[name="q${i}"]`);
+    const selected = [...checks].filter(c => c.checked).map(c => +c.value);
+    
+    const labels = checks;
+    labels.forEach((c, idx) => {
+      c.parentElement.classList.remove("correct","incorrect");
+      if (q.correct.includes(idx)) {
+        c.parentElement.classList.add("correct");
+      } else if (c.checked) {
+        c.parentElement.classList.add("incorrect");
+      }
+    });
+
+    if (JSON.stringify(selected.sort()) === JSON.stringify(q.correct.slice().sort())) {
+      correctCount++;
+    } else {
+      incorrectCount++;
+    }
+
+    document.querySelectorAll(".explanation")[i].style.display = "block";
+  });
+
+  document.getElementById("result").textContent =
+    `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
+}
+
+function resetExam() {
+  document.querySelectorAll("input").forEach(i => i.checked = false);
+  document.querySelectorAll("label").forEach(l => l.classList.remove("correct","incorrect"));
+  document.querySelectorAll(".explanation").forEach(e => e.style.display="none");
+  document.getElementById("result").textContent = "";
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
