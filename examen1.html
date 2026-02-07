@@ -4,7 +4,43 @@
 <meta charset="UTF-8">
 <title>Examen 1</title>
 <link rel="stylesheet" href="styles.css">
+
+<style>
+.question {
+  margin-bottom: 25px;
+}
+
+.code {
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.answers label {
+  display: block;
+  margin: 5px 0;
+}
+
+.correct {
+  color: green;
+  font-weight: bold;
+}
+
+.incorrect {
+  color: red;
+  font-weight: bold;
+}
+
+.explanation {
+  display: none;
+  margin-top: 8px;
+  font-style: italic;
+}
+</style>
 </head>
+
 <body>
 
 <h2>Examen 1 (Preguntas 1–10)</h2>
@@ -28,7 +64,8 @@ const questions = [
     explanation: "Python compara tuplas elemento por elemento hasta encontrar una diferencia."
   },
   {
-    text: "List all valid function calls:\ndef story(animal, action='stolen', object='milk')",
+    text: `List all valid function calls:\ndef story(animal, action='stolen', object='milk'):    
+    print(animal, "has", action, "a", object)`,
     options: [
       "story('squirel', action='got', object='nut')",
       "story('dog','found',object='bone')",
@@ -60,45 +97,41 @@ const questions = [
   },
   {
     text: "What is printed?\na,b=2,3\na,b=b,a*2\nprint(a,b)",
-    options: [
-      "Error",
-      "43",
-      "35",
-      "53",
-      "34"
-    ],
+    options: ["Error","43","35","53","34"],
     correct: [4],
     explanation: "Python evalúa el lado derecho primero."
   },
   {
-    text: "What will be the output?\na [1,2,3]\ndel a[i]\nprint(a[1])",
-    options: ["1", "the code will throw an error", "2", "3"],
+    text: "What will be the output?\na=[1,2,3]\ndel a[i]\nprint(a[1])",
+    options: ["1","the code will throw an error","2","3"],
     correct: [1],
-    explanation: "Error de sintaxis y variable i no definida."
+    explanation: "Variable i no definida."
   },
   {
-    text: "What will be the result of this program with lambda?",
-    options: ["45", "42", "102", "interpreter error"],
+    text: `What will be the result of this program with lambda?
+  list = []
+  for 1 in range(100):
+    list.append(lambda x, 1 = 1 : x+1)
+    list[42](3)`,
+    options: ["45","42","102","interpreter error"],
     correct: [3],
-    explanation: "Uso inválido de variables en for y lambda."
+    explanation: "Uso inválido de variables."
   },
   {
     text: "What will be printed?\na=[1,2,3]\na[2]=2\nprint(a)",
-    options: [
-      "error",
-      "[1,2,2,3]",
-      "[1,2,2]",
-      "[1,2,3]"
-    ],
+    options: ["error","[1,2,2,3]","[1,2,2]","[1,2,3]"],
     correct: [2],
-    explanation: "Se reemplaza el valor, no se inserta."
+    explanation: "Se reemplaza el valor."
   },
   {
-    text: "How can be called the 'func' method on the following class (select all that apply):",
-    "class myClass:" 
-     "def func(self):" 
-     "print('hello')"
-    
+
+    text: `How can be called the 'func' method on the following class (select all that apply)
+
+class myClass:
+    def func(self):
+        print('hello')
+`,
+
     options: [
       "myClass.func()",
       "obj=myClass(); obj.func()",
@@ -111,12 +144,7 @@ const questions = [
   },
   {
     text: "Which exceptions exist in Python 3?",
-    options: [
-      "ZeroDivisionError",
-      "ImportError",
-      "NameError",
-      "TypeError"
-    ],
+    options: ["ZeroDivisionError","ImportError","NameError","TypeError"],
     correct: [0,1,2,3],
     explanation: "Todas son excepciones válidas."
   }
@@ -127,8 +155,12 @@ const examDiv = document.getElementById("exam");
 questions.forEach((q, i) => {
   const div = document.createElement("div");
   div.className = "question";
-  div.innerHTML = `<p><b>${i+1}. ${q.text}</b></p>`;
-  
+
+  div.innerHTML = `
+    <b>${i + 1}.</b>
+    <pre class="code">${q.text}</pre>
+  `;
+
   const ansDiv = document.createElement("div");
   ansDiv.className = "answers";
 
@@ -137,14 +169,15 @@ questions.forEach((q, i) => {
       <label>
         <input type="checkbox" name="q${i}" value="${j}">
         ${opt}
-      </label>`;
+      </label>
+    `;
   });
 
   div.appendChild(ansDiv);
 
   const exp = document.createElement("div");
   exp.className = "explanation";
-  exp.textContent = q.explanation || "";
+  exp.textContent = q.explanation;
   div.appendChild(exp);
 
   examDiv.appendChild(div);
@@ -157,9 +190,8 @@ function gradeExam() {
   questions.forEach((q, i) => {
     const checks = document.querySelectorAll(`input[name="q${i}"]`);
     const selected = [...checks].filter(c => c.checked).map(c => +c.value);
-    
-    const labels = checks;
-    labels.forEach((c, idx) => {
+
+    checks.forEach((c, idx) => {
       c.parentElement.classList.remove("correct","incorrect");
       if (q.correct.includes(idx)) {
         c.parentElement.classList.add("correct");
